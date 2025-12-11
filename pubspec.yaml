@@ -1,15 +1,14 @@
 name: flutter_audio_visualizer
-description: "High-performance audio visualizer for Flutter with trap/dubstep style visualizations. Features circular spectrum and bar spectrum displays. Supports Android and iOS with native FFT processing."
+description: "High-performance audio visualizer for Flutter with trap/dubstep style visualizations. Features circular spectrum and bar spectrum displays with album artwork support. Supports Android and iOS with native FFT processing."
 version: 1.0.0
-homepage: https://github.com/yourusername/flutter_audio_visualizer
-repository: https://github.com/yourusername/flutter_audio_visualizer
+homepage: https://github.com/naxtor/flutter_audio_visualizer
+repository: https://github.com/naxtor/flutter_audio_visualizer
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
   flutter: '>=3.3.0'
 
 dependencies:
-  fftea: ^1.5.0+1
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2

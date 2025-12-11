@@ -37,7 +37,8 @@ class FlutterAudioVisualizerPlugin: FlutterPlugin, MethodCallHandler {
         when (call.method) {
             "initialize" -> {
                 val audioSessionId = call.argument<Int>("audioSessionId") ?: 0
-                initialize(audioSessionId, result)
+                val captureSize = call.argument<Int>("captureSize") ?: 2048
+                initialize(audioSessionId, captureSize, result)
             }
             "startCapture" -> {
                 startCapture(result)
@@ -58,16 +59,31 @@ class FlutterAudioVisualizerPlugin: FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun initialize(audioSessionId: Int, result: Result) {
+    private fun initialize(audioSessionId: Int, captureSize: Int, result: Result) {
         try {
             visualizer?.release()
             visualizer = Visualizer(audioSessionId)
             
             visualizer?.apply {
-                captureSize = Visualizer.getCaptureSizeRange()[1] // Max capture size
+                // Get valid capture size range
+                val captureSizeRange = Visualizer.getCaptureSizeRange()
+                val minSize = captureSizeRange[0]
+                val maxSize = captureSizeRange[1]
+                
+                // Ensure requested size is within valid range and is a power of 2
+                var validSize = captureSize
+                if (validSize < minSize) validSize = minSize
+                if (validSize > maxSize) validSize = maxSize
+                
+                // Round to nearest power of 2
+                validSize = Integer.highestOneBit(validSize)
+                
+                // CRITICAL: Set capture size BEFORE setting up data capture listener
+                // This is required on Android API 36+
+                this.captureSize = validSize
                 enabled = false
                 
-                // Set up FFT data capture
+                // Set up FFT data capture AFTER capture size is set
                 setDataCaptureListener(object : Visualizer.OnDataCaptureListener {
                     override fun onWaveFormDataCapture(
                         visualizer: Visualizer?,

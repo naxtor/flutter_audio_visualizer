@@ -2,26 +2,39 @@
 
 A high-performance audio visualizer plugin for Flutter with beautiful trap/dubstep style visualizations including circular spectrum and bar spectrum displays.
 
-[![Pub Version](https://img.shields.io/pub/v/flutter_audio_visualizer)](https://pub.dev/packages/flutter_audio_visualizer)
+[![Pub Version](https://img.shields.io/badge/pub-v1.0.0-blue)](https://pub.dev/packages/flutter_audio_visualizer)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+![circular spectrum with image demo](https://raw.githubusercontent.com/naxtor/flutter_audio_visualizer/main/assets/gifs/ezgif-2297ce4266af7211.gif)
+![Visucircular spectrumalizer without image demo](https://raw.githubusercontent.com/naxtor/flutter_audio_visualizer/main/assets/gifs/ezgif-272681ea22f9a663.gif)
+![bar spectrum demo](https://raw.githubusercontent.com/naxtor/flutter_audio_visualizer/main/assets/gifs/ezgif-293f4f7c2358c78d.gif)
+![bar spectrum mirror demo](https://raw.githubusercontent.com/naxtor/flutter_audio_visualizer/main/assets/gifs/ezgif-2fb70ce8d9e595d9.gif)
+
+## Key Highlights
+
+**🎧 No Audio File Required!**  
+Unlike other visualizer libraries, this plugin **captures and visualizes ANY audio playing on your device** - whether it's from Spotify, YouTube, local music players, or any other app. No need to import or manage audio files in your Flutter app!
 
 ## Features
 
 🎵 **Real-time Audio Visualization**
-- Circular spectrum visualizer with smooth 60 FPS animations
+- Circular spectrum visualizer with smooth 60 FPS animations and optional center image/album artwork
 - Vertical bar spectrum with optional mirror effect
+- Visualizes **system-wide audio** - works with any audio source on the device
 
 🚀 **High Performance**
 - Native FFT processing for optimal performance
-  - Android: Visualizer API
-  - iOS: Accelerate framework (vDSP)
+  - Android: Visualizer API (captures system audio output)
+  - iOS: Accelerate framework (vDSP) with AVAudioEngine
 - Smooth animations with configurable smoothing
 - Minimal CPU usage (<5%)
+- Adaptive sizing for non-square containers
 
 🎨 **Highly Customizable**
 - Customizable colors, gradients, and glow effects
 - Adjustable bar count, width, and spacing
 - Multiple visualization styles and layouts
+- Add album artwork or any image to circular visualizer center
 
 📱 **Cross-Platform Support**
 - ✅ Android (API 21+)
@@ -65,6 +78,8 @@ Add permission to `ios/Runner/Info.plist`:
 
 ## Quick Start
 
+> **💡 Pro Tip:** This plugin captures **system-wide audio**! You don't need to import audio files or use a specific audio player. Just play music from any app (Spotify, YouTube, local player, etc.) and the visualizer will react to it automatically.
+
 ### 1. Request Permission
 
 ```dart
@@ -84,20 +99,23 @@ import 'package:flutter_audio_visualizer/flutter_audio_visualizer.dart';
 
 final controller = AudioVisualizerController();
 
-// Initialize with system audio
+// Initialize with system audio (audioSessionId: 0 captures all audio)
 await controller.initialize(audioSessionId: 0);
 
-// Start capturing
+// Start capturing - now it will visualize ANY audio playing on the device!
 await controller.startCapture();
 ```
 
 ### 3. Use Visualizer Widgets
 
 ```dart
-CircularSpectrumVisualizer(
-  controller: controller,
-  size: 300,
-  color: Colors.purpleAccent,
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: controller,
+    color: Colors.purpleAccent,
+  ),
 )
 ```
 
@@ -158,11 +176,14 @@ class _VisualizerPageState extends State<VisualizerPage> {
       backgroundColor: Colors.black,
       body: Center(
         child: _isInitialized
-            ? CircularSpectrumVisualizer(
-                controller: _controller,
-                size: 300,
-                color: Colors.purpleAccent,
-                barCount: 60,
+            ? SizedBox(
+                width: 300,
+                height: 300,
+                child: CircularSpectrumVisualizer(
+                  controller: _controller,
+                  color: Colors.purpleAccent,
+                  barCount: 40,
+                ),
               )
             : CircularProgressIndicator(),
       ),
@@ -176,39 +197,73 @@ class _VisualizerPageState extends State<VisualizerPage> {
 ### Circular Spectrum
 
 ```dart
-CircularSpectrumVisualizer(
-  controller: _controller,
-  size: 300,
-  color: Colors.purpleAccent,
-  glowColor: Colors.purple.withValues(alpha: 0.6),
-  barCount: 60,
-  barWidth: 4.0,
-  gap: 2.0,
-  smoothing: 0.7,
-  showCenterDot: true,
+// Wrap in SizedBox to control size
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: _controller,
+    color: Colors.purpleAccent,
+    glowColor: Colors.purple.withValues(alpha: 0.6),
+    barCount: 40,
+    barWidth: 2.0,
+    gap: 2.0,
+    smoothing: 0.7,  
+    centerImage: AssetImage('assets/album_art.png'), // Optional album artwork
+  ),
 )
 ```
+
+**Properties:**
+- `controller` (required): `AudioVisualizerController` - Controls the audio data stream
+- `color`: `Color` - Primary color of the visualizer bars (default: `Colors.purpleAccent`)
+- `glowColor`: `Color?` - Glow effect color (default: primary color with 50% opacity)
+- `barCount`: `int` - Number of bars in the circle (default: 40)
+- `barWidth`: `double` - Width of each bar in pixels (default: 2.0)
+- `gap`: `double` - Gap between bars in pixels (default: 2.0)
+- `smoothing`: `double` - Smoothing factor 0.0-1.0, higher = smoother (default: 0.7)
+- `centerImage`: `ImageProvider?` - Optional image to display in the center (album artwork, logo, etc.)
+
+**Adaptive Sizing:**
+The visualizer automatically adapts to its parent container size. Wrap it in a `SizedBox`, `Container`, or any sized widget to control dimensions. Works perfectly in both square and non-square containers.
 
 ### Bar Spectrum
 
 ```dart
-BarSpectrumVisualizer(
-  controller: _controller,
-  width: 300,
+// Wrap in SizedBox to control size
+SizedBox(
+  width: double.infinity,
   height: 200,
-  color: Colors.cyan,
-  glowColor: Colors.cyanAccent.withValues(alpha: 0.5),
-  barWidth: 4.0,
-  gap: 2.0,
-  mirror: true,  // Mirror effect
-  smoothing: 0.7,
-  gradient: LinearGradient(
-    colors: [Colors.blue, Colors.cyan, Colors.teal],
-    begin: Alignment.bottomCenter,
-    end: Alignment.topCenter,
+  child: BarSpectrumVisualizer(
+    controller: _controller,
+    color: Colors.cyan,
+    glowColor: Colors.cyanAccent.withValues(alpha: 0.5),
+    barWidth: 4.0,
+    gap: 6.0,
+    mirror: true,  // Mirror effect
+    smoothing: 0.75,
+    gradient: LinearGradient(
+      colors: [Colors.blue, Colors.cyan, Colors.teal],
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+    ),
   ),
 )
 ```
+
+**Properties:**
+- `controller` (required): `AudioVisualizerController` - Controls the audio data stream
+- `color`: `Color` - Primary color of the bars (default: `Colors.purpleAccent`)
+- `glowColor`: `Color?` - Glow effect color (default: primary color with 50% opacity)
+- `gradient`: `Gradient?` - Optional gradient to apply to bars (overrides color)
+- `barCount`: `int` - Number of frequency bars to display (default: 32)
+- `barWidth`: `double` - Width of each bar in pixels (default: 4.0)
+- `gap`: `double` - Gap between bars in pixels (default: 6.0)
+- `smoothing`: `double` - Smoothing factor 0.0-1.0, higher = smoother (default: 0.75)
+- `mirror`: `bool` - Enable mirror effect (default: false)
+
+**Adaptive Sizing:**
+The visualizer automatically adapts to its parent container size. Use `double.infinity` for width or height to fill available space, or wrap in a `SizedBox` for precise control.
 
 ## Advanced Usage
 
@@ -310,16 +365,46 @@ await _controller.initialize(captureSize: 4096);  // Detailed
 
 ```dart
 // Fewer bars = better performance
-CircularSpectrumVisualizer(barCount: 30)  // Fast
-CircularSpectrumVisualizer(barCount: 120) // Detailed
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: controller,
+    barCount: 30,  // Fast - fewer bars
+  ),
+)
+
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: controller,
+    barCount: 80,  // Detailed - more bars
+  ),
+)
 ```
 
 ### Adjust Smoothing
 
 ```dart
 // Higher = smoother but less responsive
-CircularSpectrumVisualizer(smoothing: 0.9)  // Very smooth
-CircularSpectrumVisualizer(smoothing: 0.5)  // More responsive
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: controller,
+    smoothing: 0.9,  // Very smooth
+  ),
+)
+
+SizedBox(
+  width: 300,
+  height: 300,
+  child: CircularSpectrumVisualizer(
+    controller: controller,
+    smoothing: 0.5,  // More responsive
+  ),
+)
 ```
 
 ## Troubleshooting
@@ -360,17 +445,9 @@ Features all visualizer types with customization options.
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## Support
-
-- 📦 [pub.dev](https://pub.dev/packages/flutter_audio_visualizer)
-- 🐛 [Issue Tracker](https://github.com/yourusername/flutter_audio_visualizer/issues)  
-- ⭐ Star on GitHub if you find this useful!
-
----
-
 **Made with ❤️ for the Flutter community**
 
-- FFT processing: [fftea](https://pub.dev/packages/fftea)
+- Native FFT processing on Android (Visualizer API) and iOS (AVAudioEngine + Accelerate framework)
 - Inspired by trap/dubstep music visualizers
 
 ## Support

@@ -6,8 +6,6 @@ import '../frequency_data.dart';
 
 class BarSpectrumVisualizer extends StatefulWidget {
   final AudioVisualizerController controller;
-  final double height;
-  final double width;
   final Color color;
   final Color? glowColor;
   final Gradient? gradient;
@@ -20,14 +18,12 @@ class BarSpectrumVisualizer extends StatefulWidget {
   const BarSpectrumVisualizer({
     super.key,
     required this.controller,
-    this.height = 200,
-    this.width = double.infinity,
     this.color = Colors.purpleAccent,
     this.glowColor,
     this.gradient,
     this.barCount = 32,
-    this.barWidth = 8.0,
-    this.gap = 4.0,
+    this.barWidth = 4.0,
+    this.gap = 6.0,
     this.smoothing = 0.75,
     this.mirror = false,
   });
@@ -95,20 +91,16 @@ class _BarSpectrumVisualizerState extends State<BarSpectrumVisualizer>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.height,
-      width: widget.width,
-      child: CustomPaint(
-        painter: _BarSpectrumPainter(
-          magnitudes: _smoothedMagnitudes,
-          color: widget.color,
-          glowColor: widget.glowColor ?? widget.color.withValues(alpha: 0.5),
-          gradient: widget.gradient,
-          barWidth: widget.barWidth,
-          gap: widget.gap,
-          mirror: widget.mirror,
-          animation: _animationController,
-        ),
+    return CustomPaint(
+      painter: _BarSpectrumPainter(
+        magnitudes: _smoothedMagnitudes,
+        color: widget.color,
+        glowColor: widget.glowColor ?? widget.color.withValues(alpha: 0.5),
+        gradient: widget.gradient,
+        barWidth: widget.barWidth,
+        gap: widget.gap,
+        mirror: widget.mirror,
+        animation: _animationController,
       ),
     );
   }

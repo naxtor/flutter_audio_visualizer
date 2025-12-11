@@ -66,12 +66,10 @@ class AudioVisualizerController {
     try {
       _captureSize = captureSize;
 
+      // Pass captureSize during initialization (required for API 36+)
       await _methodChannel.invokeMethod('initialize', {
         'audioSessionId': audioSessionId,
-      });
-
-      await _methodChannel.invokeMethod('setCaptureSize', {
-        'size': _captureSize,
+        'captureSize': _captureSize,
       });
 
       _isInitialized = true;
@@ -102,20 +100,19 @@ class AudioVisualizerController {
         },
       );
 
-      _waveformSubscription = _waveformEventChannel
-          .receiveBroadcastStream()
-          .listen(
-            (data) {
-              if (data is List) {
-                _processWaveformData(data.cast<int>());
-              }
-            },
-            onError: (error) {
-              if (kDebugMode) {
-                print('Waveform stream error: $error');
-              }
-            },
-          );
+      _waveformSubscription =
+          _waveformEventChannel.receiveBroadcastStream().listen(
+        (data) {
+          if (data is List) {
+            _processWaveformData(data.cast<int>());
+          }
+        },
+        onError: (error) {
+          if (kDebugMode) {
+            print('Waveform stream error: $error');
+          }
+        },
+      );
 
       _isCapturing = true;
     } catch (e) {

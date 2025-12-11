@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_visualizer/flutter_audio_visualizer.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -142,6 +143,10 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
         _statusMessage = 'Initialized';
       });
     } catch (e) {
+      if (kDebugMode) {
+        print('Error initializing visualizer: $e');
+      }
+
       setState(() {
         _statusMessage = 'Error: $e';
       });
@@ -217,31 +222,39 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
     switch (_selectedVisualizer) {
       case 0:
         return Center(
-          child: CircularSpectrumVisualizer(
-            controller: _controller,
-            size: 300,
-            color: Colors.purpleAccent,
-            glowColor: Colors.purple.withValues(alpha: 0.6),
-            barCount: 60,
-            barWidth: 4,
-            gap: 2,
-            smoothing: 0.5,
-            showCenterDot: true,
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: CircularSpectrumVisualizer(
+              controller: _controller,
+              color: Colors.purpleAccent,
+              glowColor: Colors.purple.withValues(alpha: 0.6),
+              barCount: 40,
+              barWidth: 3.0,
+              gap: 2,
+              smoothing: 0.7,
+              // Example: Add album artwork in the center
+              // centerImage: const AssetImage('assets/album_art.png'),
+              // Or use NetworkImage for online images:
+              // centerImage: const NetworkImage('https://example.com/album.jpg'),
+            ),
           ),
         );
       case 1:
         return Center(
-          child: BarSpectrumVisualizer(
-            controller: _controller,
-            height: 200,
-            width: 350,
-            color: Colors.cyanAccent,
-            glowColor: Colors.cyan.withValues(alpha: 0.6),
-            barCount: 32,
-            barWidth: 8,
-            gap: 4,
-            smoothing: 0.75,
-            mirror: false,
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: BarSpectrumVisualizer(
+              controller: _controller,
+              color: Colors.purpleAccent,
+              glowColor: Colors.purple.withValues(alpha: 0.6),
+              barCount: 32,
+              barWidth: 4,
+              gap: 6,
+              smoothing: 0.75,
+              mirror: false,
+            ),
           ),
         );
       default:
@@ -320,94 +333,32 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Audio Visualizer',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      foreground: Paint()
-                        ..shader = const LinearGradient(
-                          colors: [Color(0xFF6C63FF), Color(0xFFFF6584)],
-                        ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _statusMessage,
-                    style: TextStyle(
-                      color: _isCapturing
-                          ? const Color(0xFF4CAF50)
-                          : Colors.white60,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              Text(
+                'Audio Visualizer',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  foreground: Paint()
+                    ..shader = const LinearGradient(
+                      colors: [Color(0xFF6C63FF), Color(0xFFFF6584)],
+                    ).createShader(const Rect.fromLTWH(0, 0, 200, 70)),
+                ),
               ),
-              // Status indicator
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
+              const SizedBox(height: 4),
+              Text(
+                _statusMessage,
+                style: TextStyle(
                   color: _isCapturing
-                      ? const Color(0xFF4CAF50).withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: _isCapturing
-                        ? const Color(0xFF4CAF50)
-                        : Colors.white24,
-                    width: 1.5,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _isCapturing
-                            ? const Color(0xFF4CAF50)
-                            : Colors.white54,
-                        shape: BoxShape.circle,
-                        boxShadow: _isCapturing
-                            ? [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF4CAF50,
-                                  ).withValues(alpha: 0.5),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _isCapturing ? 'LIVE' : 'IDLE',
-                      style: TextStyle(
-                        color: _isCapturing
-                            ? const Color(0xFF4CAF50)
-                            : Colors.white54,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ],
+                      ? const Color(0xFF4CAF50)
+                      : Colors.white60,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -440,7 +391,10 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1F3A).withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -526,7 +480,10 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
           colors: [const Color(0xFF1A1F3A), const Color(0xFF2A2F4A)],
         ),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
@@ -727,4 +684,3 @@ class _AudioVisualizerDemoState extends State<AudioVisualizerDemo> {
     );
   }
 }
-

@@ -21,10 +21,13 @@
 /// await controller.startCapture();
 ///
 /// // Use with visualizer widgets
-/// CircularSpectrumVisualizer(
-///   controller: controller,
-///   size: 300,
-///   color: Colors.purpleAccent,
+/// SizedBox(
+///   width: 300,
+///   height: 300,
+///   child: CircularSpectrumVisualizer(
+///     controller: controller,
+///     color: Colors.purpleAccent,
+///   ),
 /// )
 ///
 /// // Clean up when done

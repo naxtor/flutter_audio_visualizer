@@ -6,6 +6,10 @@
   - Two visualizer types: CircularSpectrum and BarSpectrum
   - 7 frequency bands optimized for music visualization
   - Customizable colors, gradients, and glow effects
+  - **System-wide audio capture** - visualizes ANY audio playing on the device (no audio file import needed!)
+  - Album artwork support with `centerImage` parameter in CircularSpectrumVisualizer
+  - Adaptive sizing for non-square containers
+  - Both visualizers automatically adapt to parent container size (wrap in `SizedBox` or `Container` to control dimensions)
 * **Android Implementation:**
   - Native Visualizer API for FFT processing
   - Support for API 21+
