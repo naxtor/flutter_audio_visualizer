@@ -5,10 +5,10 @@ A high-performance audio visualizer plugin for Flutter with beautiful trap/dubst
 [![Pub Version](https://img.shields.io/badge/pub-v1.0.0-blue)](https://pub.dev/packages/audify)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-![circular spectrum with image demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-2297ce4266af7211.gif)
-![Visucircular spectrumalizer without image demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-272681ea22f9a663.gif)
-![bar spectrum demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-293f4f7c2358c78d.gif)
-![bar spectrum mirror demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-2fb70ce8d9e595d9.gif)
+![circular spectrum with image demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-875108c491fd79d4.gif)
+![Visucircular spectrumalizer without image demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-870cd2280d788ec7.gif)
+![bar spectrum demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-8a2139feeeb5b77d.gif)
+![bar spectrum mirror demo](https://raw.githubusercontent.com/naxtor/audify/main/assets/gifs/ezgif-8e35589604b8f3a6.gif)
 
 ## Key Highlights
 

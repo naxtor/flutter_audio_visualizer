@@ -253,7 +253,7 @@ class _AudifyDemoState extends State<AudifyDemo> {
               barWidth: 4,
               gap: 6,
               smoothing: 0.75,
-              mirror: false,
+              mirror: true,
             ),
           ),
         );
